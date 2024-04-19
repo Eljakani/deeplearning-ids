@@ -1,0 +1,52 @@
+Calcul de l'attribut srv_rerror_rate à partir d'un fichier pcap
+Introduction
+L'attribut srv_rerror_rate est un indicateur clé dans la base de données NSL-KDD, qui mesure le taux d'erreurs de rejet des services. Ce rapport décrit le processus de calcul de cet attribut à partir d'un fichier pcap à l'aide d'un script Python.
+
+Méthodologie
+Bibliothèques utilisées
+dpkt : Une bibliothèque Python spécialisée dans la manipulation de paquets réseau.
+collections : Utilisée pour créer des dictionnaires avec des valeurs par défaut.
+Fonction de calcul
+La fonction calculate_srv_rerror_rate est conçue pour calculer le srv_rerror_rate à partir d'un fichier pcap. Voici les étapes clés de cette fonction :
+
+Initialisation du dictionnaire srv_stats :
+Un dictionnaire est créé pour suivre le nombre de connexions et de connexions rejetées pour chaque service. Les clés de ce dictionnaire sont des tuples (src_port, dst_port) qui représentent le service.
+Lecture du fichier pcap :
+Le fichier pcap est parcouru à l'aide de dpkt.pcap.Reader. Pour chaque paquet dans le fichier :
+Le paquet est analysé pour extraire les informations Ethernet, IP et TCP.
+Les ports source et destination sont récupérés pour identifier le service.
+Les compteurs de connexions et de connexions rejetées pour le service sont mis à jour.
+Calcul du srv_rerror_rate :
+Après avoir analysé tous les paquets, le taux d'erreurs de rejet est calculé comme le rapport entre le nombre total de connexions rejetées et le nombre total de connexions. Si le nombre total de connexions est supérieur à zéro, le taux d'erreur est calculé. Sinon, il est défini comme 0 pour éviter une division par zéro.
+Code source
+python
+Copy code
+import dpkt
+import collections
+
+def calculate_srv_rerror_rate(pcap_file):
+    srv_stats = collections.defaultdict(lambda: [0, 0])  # [connections, rejected_connections]
+    pcap = dpkt.pcap.Reader(pcap_file)
+
+    for timestamp, buf in pcap:
+        try:
+            eth = dpkt.ethernet.Ethernet(buf)
+            ip = eth.data
+            tcp = ip.data
+            src_port = tcp.sport
+            dst_port = tcp.dport
+            service = (src_port, dst_port)
+            srv_stats[service][0] += 1
+
+            if tcp.flags & dpkt.tcp.TH_RST:
+                srv_stats[service][1] += 1
+        except:
+            continue
+
+    total_conns = sum(stats[0] for stats in srv_stats.values())
+    total_rejected = sum(stats[1] for stats in srv_stats.values())
+    srv_rerror_rate = total_rejected / total_conns if total_conns > 0 else 0
+
+    return srv_rerror_rate
+Conclusion
+Ce script Python offre une méthode efficace pour calculer l'attribut srv_rerror_rate à partir d'un fichier pcap. En analysant chaque paquet réseau dans le fichier, il détermine les connexions et les connexions rejetées pour chaque service, puis calcule le taux d'erreurs de rejet pour l'ensemble des services. Ce calcul est essentiel pour comprendre et évaluer les comportements et les performances des services réseau.
