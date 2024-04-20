@@ -18,13 +18,13 @@
 @attribute 'su_attempted' real
 @attribute 'num_root' real
 @attribute 'num_file_creations' real
-@attribute 'num_shells' real
-@attribute 'num_access_files' real
+@attribute 'num_shells' real Done by Saad !
+@attribute 'num_access_files' real Done by Saad !
 @attribute 'num_outbound_cmds' real
-@attribute 'is_host_login' {'0', '1'}
-@attribute 'is_guest_login' {'0', '1'}
-@attribute 'count' real
-@attribute 'srv_count' real
+@attribute 'is_host_login' {'0', '1'} Done by Saad but need to be discussed !
+@attribute 'is_guest_login' {'0', '1'} Done by Saad but need to be discussed !
+@attribute 'count' real  Done by Saad !
+@attribute 'srv_count' real  Done by Saad !
 ```
 ## Benmouya
 -----------------------------------------

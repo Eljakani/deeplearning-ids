@@ -1,3 +1,5 @@
 dpkt
 socket
 collections
+scapy
+scapy.layers.inet
