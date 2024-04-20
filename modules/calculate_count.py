@@ -15,8 +15,8 @@ def calculate_count(pcap_file):
 
     # Open the pcap file and process each packet
 
-    pcap = dpkt.pcap.Reader(pcap_file)
-    for timestamp, buf in pcap:
+
+    for timestamp, buf in pcap_file:
         try:
             eth = dpkt.ethernet.Ethernet(buf)
             ip = eth.data

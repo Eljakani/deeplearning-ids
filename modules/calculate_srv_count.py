@@ -17,7 +17,7 @@ def calculate_srv_count(pcap_file):
 
     # Open the pcap file and process each packet
 
-    pcap = dpkt.pcap.Reader(pcap_file)
+    pcap = pcap_file
     for timestamp, buf in pcap:
         try:
             eth = dpkt.ethernet.Ethernet(buf)

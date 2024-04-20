@@ -17,7 +17,7 @@ def calculate_dst_host_same_src_port_rate(pcap_file):
     dst_host_src_ports = collections.defaultdict(lambda: collections.defaultdict(int))
 
     # Open the pcap file and process each packet
-    pcap = dpkt.pcap.Reader(pcap_file)
+    pcap = pcap_file
     for timestamp, buf in pcap:
         try:
             eth = dpkt.ethernet.Ethernet(buf)

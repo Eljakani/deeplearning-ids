@@ -17,7 +17,7 @@ def calculate_dst_host_serror_rate(pcap_file):
     dst_host_stats = collections.defaultdict(lambda: [0, 0])  # [connections, errors]
 
     # Open the pcap file and process each packet
-    pcap = dpkt.pcap.Reader(pcap_file)
+    pcap = pcap_file
     for timestamp, buf in pcap:
         try:
             eth = dpkt.ethernet.Ethernet(buf)
