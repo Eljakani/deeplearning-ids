@@ -1,7 +1,6 @@
 import dpkt
 import collections
 
-
 def calculate_diff_srv_rate(pcap_file):
     """
     Calculates the diff_srv_rate attribute from a pcap file.
@@ -15,9 +14,9 @@ def calculate_diff_srv_rate(pcap_file):
     # Initialize a set to keep track of the unique services
     unique_services = set()
 
-    # Open the pcap file and process each packet
-    pcap = pcap_file
-    for timestamp, buf in pcap:
+    # Initialize a counter to count the occurrences of each service
+    service_counter = collections.Counter()
+    for timestamp, buf in pcap_file:
         try:
             eth = dpkt.ethernet.Ethernet(buf)
             ip = eth.data
@@ -30,13 +29,16 @@ def calculate_diff_srv_rate(pcap_file):
 
             # Add the service to the set of unique services
             unique_services.add(service)
+
+            # Count the occurrence of the service
+            service_counter[service] += 1
         except:
             # Skip any packets that can't be parsed
             continue
 
     # Calculate the diff_srv_rate
     total_services = len(unique_services)
-    total_conns = sum(1 for service in unique_services)
+    total_conns = sum(service_counter.values())
     diff_srv_rate = (total_services - 1) / total_conns
 
     return diff_srv_rate
