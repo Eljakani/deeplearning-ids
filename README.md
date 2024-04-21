@@ -10,14 +10,14 @@
 @attribute 'land' {'0', '1'}  Done !!
 @attribute 'wrong_fragment' real  Done !!
 @attribute 'urgent' real  Done !!
-@attribute 'hot' real
-@attribute 'num_failed_logins' real
-@attribute 'logged_in' {'0', '1'}
-@attribute 'num_compromised' real
-@attribute 'root_shell' real
-@attribute 'su_attempted' real
-@attribute 'num_root' real
-@attribute 'num_file_creations' real
+@attribute 'hot' real  Done by Saad !!
+@attribute 'num_failed_logins' real Done by Saad and need to be discussed !!
+@attribute 'logged_in' {'0', '1'}  Done by Saad and need to be discussed !!
+@attribute 'num_compromised' real  Done by Saad and need to be discussed !!
+@attribute 'root_shell' real   Done by Saad and need to be discussed !!
+@attribute 'su_attempted' real  Done by Saad !!
+@attribute 'num_root' real  Done by Saad !
+@attribute 'num_file_creations' real  Done By Saad need a check !! 
 @attribute 'num_shells' real Done by Saad !
 @attribute 'num_access_files' real Done by Saad !
 @attribute 'num_outbound_cmds' real
