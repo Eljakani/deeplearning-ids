@@ -1,11 +1,31 @@
 from dpkt.pcap import Reader
+from scapy.all import *
+from scapy.layers.l2 import Ether
+from modules import calculate_dst_bytes
+from modules import calculate_flag
 
-from modules import calculate_count
+
+def dpkt_to_scapy(packet_data):
+    """
+    Convert a dpkt packet to a scapy packet.
+
+    Args:
+        packet_data (bytes): The raw packet data.
+
+    Returns:
+        scapy.packet.Packet: The scapy packet.
+    """
+    return Ether(packet_data)
 
 
-pcap_file = 'C:\\Users\\HP\\Desktop\\Doss_Partage\\pcap.pcap'
-with open(pcap_file, 'rb') as f:
+pcap_file_path = 'C:\\Users\\HP\\Desktop\\Doss_Partage\\pcapp.pcap'
+
+with open(pcap_file_path, 'rb') as f:
     pcap = Reader(f)
-    count = calculate_count.calculate_count(pcap)
+    # Read one packet
+    timestamp, packet_data = next(pcap)
+    scapy_packet = dpkt_to_scapy(packet_data)
 
-print(count)
+    flag = calculate_dst_bytes.calculate_dst_bytes(scapy_packet)
+
+print(flag)
