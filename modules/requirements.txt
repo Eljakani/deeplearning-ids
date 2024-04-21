@@ -1,5 +1,5 @@
 dpkt
-socket
-collections
+pip
 scapy
-scapy.layers.inet
+setuptools
+wheel
