@@ -9,13 +9,15 @@ def calculate_diff_srv_rate(pcap_file):
         pcap_file (str): Path to the pcap file.
 
     Returns:
-        float: The diff_srv_rate value.
+        float: The diff_srv_rate value, or 0 if there are no connections.
     """
     # Initialize a set to keep track of the unique services
     unique_services = set()
 
     # Initialize a counter to count the occurrences of each service
     service_counter = collections.Counter()
+
+    # Open the pcap file and process each packet
     for timestamp, buf in pcap_file:
         try:
             eth = dpkt.ethernet.Ethernet(buf)
@@ -39,6 +41,11 @@ def calculate_diff_srv_rate(pcap_file):
     # Calculate the diff_srv_rate
     total_services = len(unique_services)
     total_conns = sum(service_counter.values())
-    diff_srv_rate = (total_services - 1) / total_conns
+
+    if total_conns == 0:
+        # If there are no connections, return 0
+        diff_srv_rate = 0
+    else:
+        diff_srv_rate = (total_services - 1) / total_conns
 
     return diff_srv_rate
