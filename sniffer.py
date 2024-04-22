@@ -71,7 +71,6 @@ def sniff_packets(interface=None):
     # Save the valid packets to a PCAP file
     pcap_file = os.path.join(script_dir, 'valid_packets.pcap')
     wrpcap(pcap_file, valid_packets)
-    print(f"Valid packets saved to: {pcap_file}")
 
 # Start sniffing packets
 sniff_packets()
