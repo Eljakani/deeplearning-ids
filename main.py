@@ -1,39 +1,48 @@
-from dpkt.pcap import Reader
-from scapy.all import *
-from scapy.layers.l2 import Ether
-from modules import calculate_srv_diff_host_rate
-from modules import calculate_dst_bytes
-from modules import calculate_dst_host_count
-from modules import calculate_count
-from modules import calculate_diff_srv_rate
+import pyshark
+import time
 
+# Import custom functions from modules folder
+from modules.calculate_protocol_type import calculate_protocol_type
+from modules.calculate_service import calculate_service
+from modules.calculate_flag import calculate_flag
+from modules.calculate_src_bytes import calculate_src_bytes
+from modules.calculate_dst_bytes import calculate_dst_bytes
+from modules.calculate_land import calculate_land
 
-def dpkt_to_scapy(packet_data):
-    """
-    Convert a dpkt packet to a scapy packet.
+proccessed_packets = []
+max_packets_different_service = 10
+packets_with_different_service_count = 0
 
-    Args:
-        packet_data (bytes): The raw packet data.
+def packet_callback(packet):
+    global packets_with_different_service_count
 
-    Returns:
-        scapy.packet.Packet: The scapy packet.
-    """
-    return Ether(packet_data)
+    service = calculate_service(packet)
+    if service != "other":
+        packets_with_different_service_count += 1
 
+    # Append a new packet to the list with a mapping
+    proccessed_packets.append({
+        'protocol_type': calculate_protocol_type(packet),
+        'service': service,
+        'flag': calculate_flag(packet),
+        'src_bytes': calculate_src_bytes(packet),
+        'dst_bytes': calculate_dst_bytes(packet),
+        'land': calculate_land(packet),
+    })
+    print(proccessed_packets[-1])
 
-pcap_file_path = 'C:\\Users\\HP\\Desktop\\Doss_Partage\\pcapp.pcap'
+    if packets_with_different_service_count >= max_packets_different_service:
+        # Stop the sniffing process
+        capture.close()
+        print(f"Reached the maximum of {max_packets_different_service} packets with service different than 'other'. Sniffing stopped.")
 
-with open(pcap_file_path, 'rb') as f:
-    pcap = Reader(f)
-    # Read one packet
-    timestamp, packet_data = next(pcap)
-    scapy_packet = dpkt_to_scapy(packet_data)
+# Sniff packets from all interfaces
+capture = pyshark.LiveCapture(bpf_filter="tcp or udp or icmp", display_filter=None)
+capture.apply_on_packets(packet_callback, timeout=100)
 
-    flag = calculate_count.calculate_count(pcap)
-    flag1 = calculate_diff_srv_rate.calculate_diff_srv_rate(pcap)
-    flag3 = calculate_dst_bytes.calculate_dst_bytes(scapy_packet)
-    flag4 = calculate_srv_diff_host_rate.calculate_srv_diff_host_rate(pcap)
-    flag2 = calculate_dst_host_count.calculate_dst_host_count(pcap)
+# Log the time of sniffing
+sniff_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-
-print(flag, flag2, flag3, flag4)
+# Store packets in a pcap file
+pcap_file = "sniffed_packets.pcap"
+capture.write_pcap(pcap_file, proccessed_packets)
