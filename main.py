@@ -1,4 +1,5 @@
 from scapy.all import *
+import os
 
 # List of valid protocol types
 valid_protocol_types = ['tcp', 'udp', 'icmp']
@@ -14,12 +15,13 @@ valid_services = ['aol', 'auth', 'bgp', 'courier', 'csnet_ns', 'ctf', 'daytime',
 
 valid_packets_captured = 0
 max_valid_packets = 10
+valid_packets = []
 
 def sniff_packets(interface=None):
-    global valid_packets_captured
+    global valid_packets_captured, valid_packets
 
     def handle_packet(packet):
-        global valid_packets_captured
+        global valid_packets_captured, valid_packets
 
         # Check if the packet has a transport layer protocol
         if packet.haslayer('TCP'):
@@ -54,6 +56,7 @@ def sniff_packets(interface=None):
             return
 
         print(f"Protocol Type: {protocol_type}, Service: {service}")
+        valid_packets.append(packet)  # Add the valid packet to the list
         valid_packets_captured += 1
 
         # Stop sniffing if we have captured the maximum number of valid packets
@@ -61,6 +64,14 @@ def sniff_packets(interface=None):
             return True
 
     packets = sniff(iface=interface, prn=lambda x: handle_packet(x), stop_filter=lambda x: valid_packets_captured >= max_valid_packets)
+
+    # Get the directory of the script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Save the valid packets to a PCAP file
+    pcap_file = os.path.join(script_dir, 'valid_packets.pcap')
+    wrpcap(pcap_file, valid_packets)
+    print(f"Valid packets saved to: {pcap_file}")
 
 # Start sniffing packets
 sniff_packets()
