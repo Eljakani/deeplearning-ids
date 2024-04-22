@@ -1,4 +1,3 @@
-import sniffer
 from modules.calculate_protocol_type import calculate_protocol_type
 from modules.calculate_service import calculate_service
 from modules.calculate_flag import calculate_flag
@@ -45,7 +44,7 @@ import dpkt
 processed_packets = []
 
 # Read the PCAP file
-pcap_file = 'valid_packets.pcap'
+pcap_file = 'C:\\Users\\HP\\Desktop\\Doss_Partage\\pcap.pcap'
 packets = rdpcap(pcap_file)
 
 # Iterate over the packets
@@ -58,7 +57,9 @@ for packet in packets:
         'dst_bytes': calculate_dst_bytes(packet),
         'land': calculate_land(packet),
         'wrong_fragment' : calculate_wrong_fragment(packet),
-        'urgent' : calculate_urgent(packet)
+        'urgent' : calculate_urgent(packet),
+        'is_host_login' : calculate_is_host_login(packet),
+        'is_guest_login' : calculate_is_guest_login(packet)
     }
     processed_packets.append(processed_packet)
 
@@ -77,8 +78,7 @@ with open(pcap_file, 'rb') as pcap_filee:
     num_shells = calculate_num_shells(pcap)
     num_access_files = calculate_num_access_files(pcap)
     num_outbound_cmds = calculate_num_outbound_cmds(pcap)
-    is_host_login = calculate_is_host_login(pcap)
-    is_guest_login = calculate_is_guest_login(pcap)
+
     count = calculate_count(pcap)
     srv_count = calculate_srv_count(pcap)
     serror_rate = calculate_serror_rate(pcap)
@@ -114,8 +114,8 @@ for packet_dict in processed_packets:
     packet_dict['num_shells'] = num_shells
     packet_dict['num_access_files'] = num_access_files
     packet_dict['num_outbound_cmds'] = num_outbound_cmds
-    packet_dict['is_host_login'] = is_host_login
-    packet_dict['is_guest_login'] = is_guest_login
+    #packet_dict['is_host_login'] = is_host_login
+    #packet_dict['is_guest_login'] = is_guest_login
     packet_dict['count'] = count
     packet_dict['srv_count'] = srv_count
     packet_dict['serror_rate'] = serror_rate
