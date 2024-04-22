@@ -72,5 +72,5 @@ def sniff_packets(interface=None):
     pcap_file = os.path.join(script_dir, 'valid_packets.pcap')
     wrpcap(pcap_file, valid_packets)
 
-# Start sniffing packets
+# Start sniffing packets on all interfaces
 sniff_packets()
