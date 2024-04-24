@@ -1,3 +1,4 @@
+from pymongo import MongoClient
 from modules.calculate_protocol_type import calculate_protocol_type
 from modules.calculate_service import calculate_service
 from modules.calculate_flag import calculate_flag
@@ -41,6 +42,11 @@ from modules.calculate_dst_host_srv_rerror_rate import calculate_dst_host_srv_re
 from scapy.all import *
 import dpkt
 
+# MongoDB connection
+client = MongoClient('mongodb://localhost:27017/')
+db = client['deeplearning_db']
+collection = db['valid_packets']
+
 processed_packets = []
 
 # Read the PCAP file
@@ -78,4 +84,5 @@ for feature in features:
 
 
 # Print the processed packets
-print(processed_packets)
+collection.insert_many(processed_packets)
+print("All packets have been processed and saved to the database.")
