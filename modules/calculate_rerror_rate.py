@@ -16,17 +16,29 @@ def calculate_rerror_rate(pcap_file):
     rejected_conns = 0
     total_conns = 0
 
-    # Open the pcap file and process each packet
-
-    pcap = pcap_file
-    for timestamp, buf in pcap:
+    for timestamp, buf in pcap_file:
         try:
             eth = dpkt.ethernet.Ethernet(buf)
             ip = eth.data
-            tcp = ip.data
+            protocol = ip.p
 
-            # Check if the packet has the RST flag set (rejected connection)
-            if tcp.flags & dpkt.tcp.TH_RST:
+            # Check if the packet is TCP
+            if protocol == dpkt.ip.IP_PROTO_TCP:
+                tcp = ip.data
+                # Check if the packet has the RST flag set (rejected connection)
+                if tcp.flags & dpkt.tcp.TH_RST:
+                    rejected_conns += 1
+
+            # Check if the packet is UDP
+            elif protocol == dpkt.ip.IP_PROTO_UDP:
+                udp = ip.data
+                # For UDP, we consider the absence of a reply as an error
+                if udp.dport not in [53, 67, 68] and udp.sport not in [53, 67, 68]:
+                    rejected_conns += 1
+
+            # Check if the packet is ICMP
+            elif protocol == dpkt.ip.IP_PROTO_ICMP:
+                # ICMP doesn't have flags like TCP, so we'll consider it as an error
                 rejected_conns += 1
 
             # Increment the total number of connections

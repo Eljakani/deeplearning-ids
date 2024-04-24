@@ -3,34 +3,37 @@ import collections
 
 
 def calculate_same_srv_rate(pcap_file):
-    """
-    Calculates the same_srv_rate attribute from a pcap file.
 
-    Args:
-        pcap_file (str): Path to the pcap file.
-
-    Returns:
-        float: The same_srv_rate value.
-    """
     # Initialize a dictionary to keep track of the number of connections for each service
     srv_conn_counts = collections.defaultdict(int)
 
     # Open the pcap file and process each packet
-
-    pcap = pcap_file
-    for timestamp, buf in pcap:
+    for timestamp, buf in pcap_file:
         try:
             eth = dpkt.ethernet.Ethernet(buf)
             ip = eth.data
-            tcp = ip.data
+            protocol = ip.p
 
-            # Get the source and destination ports (represents the service)
-            src_port = tcp.sport
-            dst_port = tcp.dport
-            service = (src_port, dst_port)
+            # Check if the packet is TCP
+            if protocol == dpkt.ip.IP_PROTO_TCP:
+                tcp = ip.data
+                src_port = tcp.sport
+                dst_port = tcp.dport
+                service = (src_port, dst_port)
+                srv_conn_counts[service] += 1
 
-            # Increment the connection count for the service
-            srv_conn_counts[service] += 1
+            # Check if the packet is UDP
+            elif protocol == dpkt.ip.IP_PROTO_UDP:
+                udp = ip.data
+                src_port = udp.sport
+                dst_port = udp.dport
+                service = (src_port, dst_port)
+                srv_conn_counts[service] += 1
+
+            # For ICMP, we skip as it doesn't have the concept of ports
+            elif protocol == dpkt.ip.IP_PROTO_ICMP:
+                pass
+
         except:
             # Skip any packets that can't be parsed
             continue

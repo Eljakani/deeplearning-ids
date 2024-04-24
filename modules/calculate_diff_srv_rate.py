@@ -1,16 +1,9 @@
+import sys
+
 import dpkt
 import collections
 
 def calculate_diff_srv_rate(pcap_file):
-    """
-    Calculates the diff_srv_rate attribute from a pcap file.
-
-    Args:
-        pcap_file (str): Path to the pcap file.
-
-    Returns:
-        float: The diff_srv_rate value, or 0 if there are no connections.
-    """
     # Initialize a set to keep track of the unique services
     unique_services = set()
 

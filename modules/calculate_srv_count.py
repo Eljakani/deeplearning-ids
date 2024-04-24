@@ -3,34 +3,38 @@ import collections
 
 
 def calculate_srv_count(pcap_file):
-    """
-    Calculates the srv_count attribute from a pcap file.
 
-    Args:
-        pcap_file (str): Path to the pcap file.
-
-    Returns:
-        int: The srv_count value.
-    """
     # Initialize a set to keep track of the unique services
     services = set()
 
     # Open the pcap file and process each packet
-
-    pcap = pcap_file
-    for timestamp, buf in pcap:
+    for timestamp, buf in pcap_file:
         try:
             eth = dpkt.ethernet.Ethernet(buf)
             ip = eth.data
-            tcp = ip.data
+            protocol = ip.p
 
-            # Get the source and destination ports (represents the service)
-            src_port = tcp.sport
-            dst_port = tcp.dport
-            service = (src_port, dst_port)
+            # For TCP packets
+            if protocol == dpkt.ip.IP_PROTO_TCP:
+                tcp = ip.data
+                src_port = tcp.sport
+                dst_port = tcp.dport
+                service = (src_port, dst_port)
+                services.add(service)
 
-            # Add the service to the set of unique services
-            services.add(service)
+            # For UDP packets
+            elif protocol == dpkt.ip.IP_PROTO_UDP:
+                udp = ip.data
+                src_port = udp.sport
+                dst_port = udp.dport
+                service = (src_port, dst_port)
+                services.add(service)
+
+            # For ICMP packets
+            elif protocol == dpkt.ip.IP_PROTO_ICMP:
+                # ICMP doesn't have ports, so we can't determine service. Skipping it.
+                pass
+
         except:
             # Skip any packets that can't be parsed
             continue

@@ -3,15 +3,6 @@ import socket
 
 
 def calculate_dst_host_count(pcap_file):
-    """
-    Calculates the dst_host_count attribute from a pcap file.
-
-    Args:
-        pcap_file (str): Path to the pcap file.
-
-    Returns:
-        int: The dst_host_count value.
-    """
     # Initialize a set to keep track of the unique destination hosts
     dst_hosts = set()
 

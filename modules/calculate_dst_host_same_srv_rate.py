@@ -2,38 +2,38 @@ import dpkt
 import socket
 import collections
 
-
 def calculate_dst_host_same_srv_rate(pcap_file):
-    """
-    Calculates the dst_host_same_srv_rate attribute from a pcap file.
 
-    Args:
-        pcap_file (str): Path to the pcap file.
-
-    Returns:
-        float: The dst_host_same_srv_rate value.
-    """
     # Initialize a dictionary to keep track of the services and their associated destination hosts
     dst_host_services = collections.defaultdict(set)
 
     # Open the pcap file and process each packet
-    pcap = pcap_file
-    for timestamp, buf in pcap:
+    for timestamp, buf in pcap_file:
         try:
             eth = dpkt.ethernet.Ethernet(buf)
             ip = eth.data
-            tcp = ip.data
 
             # Get the destination IP address
             dst_ip = socket.inet_ntoa(ip.dst)
 
-            # Get the source and destination ports (represents the service)
-            src_port = tcp.sport
-            dst_port = tcp.dport
-            service = (src_port, dst_port)
+            # Check if the packet is an IP packet
+            if isinstance(ip, dpkt.ip.IP):
+                transport = ip.data
 
-            # Add the destination host and service to the dictionary
-            dst_host_services[dst_ip].add(service)
+                # Get the source and destination ports (represents the service)
+                src_port = 0  # Default value for ICMP and UDP
+                if isinstance(transport, dpkt.tcp.TCP):
+                    src_port = transport.sport
+                elif isinstance(transport, dpkt.udp.UDP):
+                    src_port = transport.sport
+                elif isinstance(transport, dpkt.icmp.ICMP):
+                    # ICMP doesn't have a concept of ports, use a default value
+                    src_port = 0
+                dst_port = transport.dport
+                service = (src_port, dst_port)
+
+                # Add the destination host and service to the dictionary
+                dst_host_services[dst_ip].add(service)
         except:
             # Skip any packets that can't be parsed
             continue

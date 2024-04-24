@@ -2,36 +2,37 @@ import dpkt
 import socket
 import collections
 
-
 def calculate_dst_host_same_src_port_rate(pcap_file):
-    """
-    Calculates the dst_host_same_src_port_rate attribute from a pcap file.
 
-    Args:
-        pcap_file (str): Path to the pcap file.
-
-    Returns:
-        float: The dst_host_same_src_port_rate value.
-    """
     # Initialize a dictionary to keep track of the source ports and their associated destination hosts
     dst_host_src_ports = collections.defaultdict(lambda: collections.defaultdict(int))
 
     # Open the pcap file and process each packet
-    pcap = pcap_file
-    for timestamp, buf in pcap:
+    for timestamp, buf in pcap_file:
         try:
             eth = dpkt.ethernet.Ethernet(buf)
             ip = eth.data
-            tcp = ip.data
 
             # Get the destination IP address
             dst_ip = socket.inet_ntoa(ip.dst)
 
-            # Get the source port
-            src_port = tcp.sport
+            # Check if the packet is an IP packet
+            if isinstance(ip, dpkt.ip.IP):
+                transport = ip.data
 
-            # Increment the count for the source port and destination host
-            dst_host_src_ports[dst_ip][src_port] += 1
+                # Get the source port
+                src_port = 0  # Default value for ICMP and UDP
+                if isinstance(transport, dpkt.tcp.TCP):
+                    src_port = transport.sport
+                elif isinstance(transport, dpkt.udp.UDP):
+                    src_port = transport.sport
+                elif isinstance(transport, dpkt.icmp.ICMP):
+                    # ICMP doesn't have a concept of source port, use a default value
+                    src_port = 0
+
+                # Increment the count for the source port and destination host
+                dst_host_src_ports[dst_ip][src_port] += 1
+
         except:
             # Skip any packets that can't be parsed
             continue

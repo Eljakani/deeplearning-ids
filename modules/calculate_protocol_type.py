@@ -1,4 +1,6 @@
 from scapy.all import *
+from scapy.layers.inet import TCP, UDP, ICMP
+
 
 def calculate_protocol_type(packet):
     """

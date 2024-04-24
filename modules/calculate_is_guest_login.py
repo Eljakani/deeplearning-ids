@@ -1,6 +1,5 @@
 from scapy.all import *
-from scapy.layers.inet import TCP, IP
-
+from scapy.layers.inet import TCP, IP, UDP, ICMP
 
 def calculate_is_guest_login(packet):
     # Initialize guest login flag
@@ -12,8 +11,20 @@ def calculate_is_guest_login(packet):
     # Check if TCP layer exists
     if packet.haslayer(TCP):
         # Check protocol and ports (FTP, HTTP, HTTPS)
-        if (packet[TCP].dport == 21 or packet[TCP].dport == 80 or packet[TCP].dport == 443) \
-            and (IP(packet).src.startswith(guest_subnet) or IP(packet).dst.startswith(guest_subnet)):
+        if (packet[TCP].dport == 21 or packet[TCP].dport == 80 or packet[TCP].dport == 443) and \
+           (IP(packet).src.startswith(guest_subnet) or IP(packet).dst.startswith(guest_subnet)):
+            is_guest_login = 1
+
+    # Check if UDP layer exists
+    elif packet.haslayer(UDP):
+        # Check if source or destination IP is in the guest subnet
+        if IP(packet).src.startswith(guest_subnet) or IP(packet).dst.startswith(guest_subnet):
+            is_guest_login = 1
+
+    # Check if ICMP layer exists
+    elif packet.haslayer(ICMP):
+        # Check if source or destination IP is in the guest subnet
+        if IP(packet).src.startswith(guest_subnet) or IP(packet).dst.startswith(guest_subnet):
             is_guest_login = 1
 
     return is_guest_login

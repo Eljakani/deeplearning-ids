@@ -1,4 +1,6 @@
 from scapy.all import *
+from scapy.layers.inet import TCP, UDP
+
 
 def calculate_service(packet):
     """

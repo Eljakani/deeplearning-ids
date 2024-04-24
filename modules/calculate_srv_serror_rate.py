@@ -3,38 +3,51 @@ import collections
 
 
 def calculate_srv_serror_rate(pcap_file):
-    """
-    Calculates the srv_serror_rate attribute from a pcap file.
 
-    Args:
-        pcap_file (str): Path to the pcap file.
-
-    Returns:
-        float: The srv_serror_rate value.
-    """
     # Initialize a dictionary to keep track of the number of connections and errors for each service
     srv_stats = collections.defaultdict(lambda: [0, 0])  # [connections, errors]
 
     # Open the pcap file and process each packet
-
-    pcap = pcap_file
-    for timestamp, buf in pcap:
+    for timestamp, buf in pcap_file:
         try:
             eth = dpkt.ethernet.Ethernet(buf)
             ip = eth.data
-            tcp = ip.data
+            protocol = ip.p
 
-            # Get the source and destination ports (represents the service)
-            src_port = tcp.sport
-            dst_port = tcp.dport
-            service = (src_port, dst_port)
+            # For TCP packets
+            if protocol == dpkt.ip.IP_PROTO_TCP:
+                tcp = ip.data
+                src_port = tcp.sport
+                dst_port = tcp.dport
+                service = (src_port, dst_port)
 
-            # Increment the connection count for the service
-            srv_stats[service][0] += 1
+                srv_stats[service][0] += 1
 
-            # Check if the packet has the RST or FIN flag set (connection error)
-            if tcp.flags & (dpkt.tcp.TH_RST | dpkt.tcp.TH_FIN):
-                srv_stats[service][1] += 1
+                if tcp.flags & (dpkt.tcp.TH_RST | dpkt.tcp.TH_FIN):
+                    srv_stats[service][1] += 1
+
+            # For UDP packets
+            elif protocol == dpkt.ip.IP_PROTO_UDP:
+                udp = ip.data
+                src_port = udp.sport
+                dst_port = udp.dport
+                service = (src_port, dst_port)
+
+                srv_stats[service][0] += 1
+
+                # For UDP, there's no concept of RST or FIN flags. We consider all packets as successful.
+                # Hence, we don't increment the error count.
+
+            # For ICMP packets
+            elif protocol == dpkt.ip.IP_PROTO_ICMP:
+                # For ICMP, there's no concept of ports. Use 'ICMP' as service identifier.
+                icmp_service = ('ICMP', 'ICMP')
+
+                srv_stats[icmp_service][0] += 1
+
+                # For ICMP, there's no concept of RST or FIN flags. We consider all packets as successful.
+                # Hence, we don't increment the error count.
+
         except:
             # Skip any packets that can't be parsed
             continue
