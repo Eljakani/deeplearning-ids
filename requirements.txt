@@ -1,5 +1,7 @@
-dpkt
-pip
-scapy
-setuptools
-wheel
+dpkt~=1.9.8
+pip~=23.2.1
+scapy~=2.5.0
+setuptools~=68.2.0
+wheel~=0.41.2
+dnspython~=2.6.1
+pymongo~=4.7.0
