@@ -27,7 +27,7 @@ def calculate_num_access_files(pcap):
                             http = dpkt.http.Request(data)
                             if http.method == 'GET' or http.method == 'POST':
                                 num_access_files += 1
-                        except dpkt.NeedData:
+                        except (dpkt.UnpackError, dpkt.NeedData):
                             pass
 
                 # Check for UDP protocol

@@ -72,15 +72,20 @@ for packet in packets:
     processed_packets.append(processed_packet)
 
 
-
-
 features = ['hot', 'num_failed_logins', 'logged_in', 'num_compromised', 'root_shell', 'su_attempted', 'num_root', 'num_file_creations', 'num_access_files', 'count', 'srv_count', 'serror_rate', 'srv_serror_rate', 'rerror_rate', 'srv_rerror_rate', 'same_srv_rate', 'diff_srv_rate', 'srv_diff_host_rate', 'dst_host_count', 'dst_host_srv_count', 'dst_host_same_srv_rate', 'dst_host_diff_srv_rate', 'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate', 'dst_host_srv_serror_rate', 'dst_host_rerror_rate', 'dst_host_srv_rerror_rate']
+
+# Calculate features once
+calculated_features = {}
+
 for feature in features:
     with open(pcap_file, 'rb') as pcap_filee:
         pcap = dpkt.pcap.Reader(pcap_filee)
-        # Calculate the feature by calling the appropriate function and passing the pcap file and append features to each dictionary in processed_packets
-        for i in range(len(processed_packets)):
-            processed_packets[i][feature] = globals()[f'calculate_{feature}'](pcap)
+        calculated_features[feature] = globals()[f'calculate_{feature}'](pcap)
+
+  # Append the calculated features to each dictionary in processed_packets
+    for packet_dict in processed_packets:
+        for feature, value in calculated_features.items():
+            packet_dict[feature] = value
 
 
 # Print the processed packets
