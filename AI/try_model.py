@@ -8,10 +8,7 @@ def process_real_time_data(csv_file_path):
     df = pd.read_csv(csv_file_path)
 
     # Assuming the last column is the target variable and the rest are features
-    X_test = df.iloc[:, :-1].values
-    result = df.iloc[:, -1].values
-    result = result.astype(float)
-    result = np.resize(result, (len(result), 1))
+    X_test = df
 
     # Standardize the features (using the same scaler as in the training script)
     scaler = StandardScaler()
@@ -30,10 +27,6 @@ def process_real_time_data(csv_file_path):
     print("Predictions:")
     print(rounded_predictions)
 
-    merged_matrix = np.hstack((rounded_predictions, result))
-
-    print("Merged Matrix (Horizontally):")
-    print(merged_matrix)
 
 if __name__ == "__main__":
     # Example usage with real-time data
