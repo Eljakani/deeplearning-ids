@@ -15,7 +15,7 @@ def process_real_time_data(csv_file_path):
     X_test = scaler.fit_transform(X_test)
 
     # Load the saved model
-    loaded_model = load_model('trained_model.keras')  # Replace with the correct path if needed
+    loaded_model = load_model('trained_model_final.keras')  # Replace with the correct path if needed
 
     # Now you can use the loaded model to make predictions on the test data
     predictions = loaded_model.predict(X_test)
