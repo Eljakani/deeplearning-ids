@@ -35,4 +35,9 @@ fi
 # install required python packages
 pip3 install -r requirements.txt
 # run the application
-python3 main.py
+
+while true; do
+  python3 main.py
+  python3 ./AI/extract_db.py
+  python3 ./AI/bin.py
+done
