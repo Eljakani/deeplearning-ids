@@ -1,38 +1,49 @@
+import time
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.models import load_model
+from pymongo import MongoClient
 
-def process_real_time_data(csv_file_path):
-    # Load the CSV file into a Pandas DataFrame
-    df = pd.read_csv(csv_file_path)
+def process_real_time_data():
+    # Connect to the MongoDB database
+    client = MongoClient('mongodb://192.168.160.130:27017/')
+    db = client['deeplearning_db']
+    collection = db['valid_csv']
 
-    # Assuming the last column is the target variable and the rest are features
-    X_test = df
+    while True:
+        # Retrieve the data from the MongoDB collection
+        data = list(collection.find({}, {'_id': 0}))
 
-    # Standardize the features (using the same scaler as in the training script)
-    scaler = StandardScaler()
-    X_test = scaler.fit_transform(X_test)
+        # Check if there is data to process
+        if data:
+            # Convert the data to a Pandas DataFrame
+            df = pd.DataFrame(data)
 
-    # Load the saved model
-    loaded_model = load_model('trained_model_final.keras')  # Replace with the correct path if needed
+            # Standardize the features (using the same scaler as in the training script)
+            scaler = StandardScaler()
+            X_test = scaler.fit_transform(df)
 
-    # Now you can use the loaded model to make predictions on the test data
-    predictions = loaded_model.predict(X_test)
+            # Load the saved model
+            loaded_model = load_model('trained_model_final.keras')
 
-    # Assuming binary classification, you may want to round the predictions to 0 or 1
-    rounded_predictions = np.round(predictions)
+            # Make predictions
+            predictions = loaded_model.predict(X_test)
+            rounded_predictions = np.round(predictions)
 
-    # Print or use the predictions as needed
-    print("Predictions:")
-    print(rounded_predictions)
+            # Print or use the predictions as needed
+            print("Predictions:")
+            print(rounded_predictions)
 
+            # Clear the MongoDB collection
+            collection.delete_many({})
+            print("MongoDB collection cleared.")
+
+        else:
+            print("No data found in the MongoDB collection. Waiting for new data...")
+
+        # Wait for a certain amount of time before checking again
+        time.sleep(1)  # Wait for 1 minute (adjust as needed)
 
 if __name__ == "__main__":
-    # Example usage with real-time data
-    while True:
-        csv_file_path = input("Enter the path to the CSV file with real-time data (or 'exit' to quit): ")
-        if csv_file_path.lower() == 'exit':
-            break
-
-        process_real_time_data(csv_file_path)
+    process_real_time_data()
