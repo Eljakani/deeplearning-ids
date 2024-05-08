@@ -56,18 +56,19 @@ packets = rdpcap(pcap_file)
 # Iterate over the packets
 for packet in packets:
     processed_packet = {
+    	'duration': 2,
         'protocol_type': calculate_protocol_type(packet),
         'service': calculate_service(packet),
         'flag': calculate_flag(packet),
-        'src_bytes': calculate_src_bytes(packet),
-        'dst_bytes': calculate_dst_bytes(packet),
-        'land': calculate_land(packet),
-        'wrong_fragment' : calculate_wrong_fragment(packet),
-        'urgent' : calculate_urgent(packet),
-        'is_host_login' : calculate_is_host_login(packet),
-        'is_guest_login' : calculate_is_guest_login(packet),
-        'num_shells' : calculate_num_shells(packet),
-        'num_outbound_cmds' : calculate_num_outbound_cmds(packet),
+        'src_bytes': float(calculate_src_bytes(packet)),
+        'dst_bytes': float(calculate_dst_bytes(packet)),
+        'land': float(calculate_land(packet)),
+        'wrong_fragment' : float(calculate_wrong_fragment(packet)),
+        'urgent' : float(calculate_urgent(packet)),
+        'is_host_login' : float(calculate_is_host_login(packet)),
+        'is_guest_login' : float(calculate_is_guest_login(packet)),
+        'num_shells' : float(calculate_num_shells(packet)),
+        'num_outbound_cmds' : float(calculate_num_outbound_cmds(packet)),
     }
     processed_packets.append(processed_packet)
 
@@ -80,7 +81,7 @@ calculated_features = {}
 for feature in features:
     with open(pcap_file, 'rb') as pcap_filee:
         pcap = dpkt.pcap.Reader(pcap_filee)
-        calculated_features[feature] = globals()[f'calculate_{feature}'](pcap)
+        calculated_features[feature] = float(globals()[f'calculate_{feature}'](pcap))
 
   # Append the calculated features to each dictionary in processed_packets
     for packet_dict in processed_packets:
