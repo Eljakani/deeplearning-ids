@@ -9,11 +9,12 @@ def process_real_time_data():
     # Connect to the MongoDB database
     client = MongoClient('mongodb://192.168.160.130:27017/')
     db = client['deeplearning_db']
-    collection = db['valid_csv']
+    input_collection = db['valid_csv']
+    output_collection = db['predictions']  # Create a new collection for storing predictions
 
     while True:
         # Retrieve the data from the MongoDB collection
-        data = list(collection.find({}, {'_id': 0}))
+        data = list(input_collection.find({}, {'_id': 0}))
 
         # Check if there is data to process
         if data:
@@ -35,9 +36,13 @@ def process_real_time_data():
             print("Predictions:")
             print(rounded_predictions)
 
-            # Clear the MongoDB collection
-            collection.delete_many({})
-            print("MongoDB collection cleared.")
+            # Store the predictions in the new MongoDB collection
+            output_collection.insert_many([{'prediction': int(pred)} for pred in rounded_predictions.flatten()])
+            print("Predictions stored in the MongoDB collection.")
+
+            # Clear the input MongoDB collection
+            input_collection.delete_many({})
+            print("Input MongoDB collection cleared.")
 
         else:
             print("No data found in the MongoDB collection. Waiting for new data...")
