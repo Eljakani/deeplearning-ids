@@ -26,7 +26,7 @@ def process_real_time_data():
             X_test = scaler.fit_transform(df)
 
             # Load the saved model
-            loaded_model = load_model('trained_model_final.keras')
+            loaded_model = load_model('trained_model_final.h5')
 
             # Make predictions
             predictions = loaded_model.predict(X_test)
