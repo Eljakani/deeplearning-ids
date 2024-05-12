@@ -21,7 +21,7 @@ services:
     ports:
       - 8080:80
     environment:
-      - REACT_APP_SERVER_ADDRESS=${BACKEND_ADDRESS}:3000
+      - REACT_APP_SERVER_ADDRESS=http://128.110.217.103:3000
     depends_on:
       - backend
 volumes:
