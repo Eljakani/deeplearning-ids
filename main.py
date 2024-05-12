@@ -39,7 +39,10 @@ from modules.calculate_dst_host_serror_rate import calculate_dst_host_serror_rat
 from modules.calculate_dst_host_srv_serror_rate import calculate_dst_host_srv_serror_rate
 from modules.calculate_dst_host_rerror_rate import calculate_dst_host_rerror_rate
 from modules.calculate_dst_host_srv_rerror_rate import calculate_dst_host_srv_rerror_rate
+from modules.ip_source import ip_source
 from scapy.all import *
+import sniffer
+import time
 import dpkt
 
 # MongoDB connection
@@ -48,16 +51,17 @@ db = client['deeplearning_db']
 collection = db['valid_packets']
 
 processed_packets = []
-
+duration = sniffer.sniff_packets()
 # Read the PCAP file
-pcap_file = 'dos_packets.pcap'
+pcap_file = 'valid_packets.pcap'
 packets = rdpcap(pcap_file)
 
 # Iterate over the packets
 for packet in packets:
     processed_packet = {
-    	'ip_source': '192.168.1.1',
-    	'duration': 2,
+    	'ip_source': ip_source(packet),
+    	'timestamp': int(time.time()),
+    	'duration': duration,
         'protocol_type': calculate_protocol_type(packet),
         'service': calculate_service(packet),
         'flag': calculate_flag(packet),

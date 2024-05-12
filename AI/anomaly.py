@@ -21,7 +21,7 @@ def process_real_time_data():
         if data:
             # Convert the data to a Pandas DataFrame
             df = pd.DataFrame(data)
-            X = df.drop('ip_source', axis=1)
+            X = df.drop(df.columns[[0, 1]], axis=1)
             
 
             # Standardize the features (using the same scaler as in the training script)
