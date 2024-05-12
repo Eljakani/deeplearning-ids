@@ -18,7 +18,12 @@ import StatusPercent from './DashboardCards/StatusPercent';
 
 const Dashboard = () => {
     const fetcher = (...args) => fetch(...args).then(res => res.json())
-    const { data, error, isLoading } = useSWR('http://localhost:3000/overview', fetcher, { refreshInterval: 1000 });
+    const { data, error, isLoading } = useSWR(
+        // get the server address from the environment variable and add the endpoint "/overview"
+        `${process.env.REACT_APP_SERVER_ADDRESS}/overview`,
+        fetcher,
+        { refreshInterval: 1000 }
+        );
     
     
 

@@ -6,5 +6,21 @@ services:
       - 27017:27017
     volumes:
       - mongodb_data:/data/db
+  backend:
+    build: 
+      context: monitoring/backend
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/
+  frontend:
+    build: 
+      context: monitoring/front
+    ports:
+      - 8080:80
+    environment:
+      - REACT_APP_SERVER_ADDRESS=http://backend:3000   # Assuming backend service runs on port 3000
 volumes:
   mongodb_data:

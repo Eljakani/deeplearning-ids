@@ -10,7 +10,8 @@ const server = http.createServer(app);
 app.use(cors());
 
 // MongoDB configuration
-const MONGODB_URI = "mongodb://localhost:27017/";
+// get the MONGODB_URI environment variables set by the docker-compose file
+const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB = "deeplearning_db";
 
 if (!MONGODB_URI) {
