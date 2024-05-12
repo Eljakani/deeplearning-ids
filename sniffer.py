@@ -19,7 +19,7 @@ valid_packets_captured = 0
 max_valid_packets = 500
 valid_packets = []
 
-def sniff_packets(interface='lo'):
+def sniff_packets(interface='eth0'):
     global valid_packets_captured, valid_packets
 
     def handle_packet(packet):
@@ -56,8 +56,6 @@ def sniff_packets(interface='lo'):
         # Check if the service is valid
         if service not in valid_services:
             return
-
-        print(f"Protocol Type: {protocol_type}, Service: {service}")
         valid_packets.append(packet)  # Add the valid packet to the list
         valid_packets_captured += 1
 
