@@ -1,5 +1,5 @@
 # Use Node.js image as base for the builder stage
-FROM node:14 AS builder
+FROM node:lts AS builder
 
 # Set working directory
 WORKDIR /app
@@ -10,11 +10,20 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Debugging: Print out the list of files in the working directory
+RUN ls -la
+
 # Copy the rest of the application
 COPY . .
 
+# Debugging: Print out the list of files after copying
+RUN ls -la
+
 # Build the React app
 RUN npm run build
+
+# Debugging: Print out the list of files after build
+RUN ls -la /app/
 
 # Use Nginx as base image for serving the application
 FROM nginx:alpine
