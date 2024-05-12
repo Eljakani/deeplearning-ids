@@ -50,12 +50,13 @@ collection = db['valid_packets']
 processed_packets = []
 
 # Read the PCAP file
-pcap_file = 'valid_packets.pcap'
+pcap_file = 'dos_packets.pcap'
 packets = rdpcap(pcap_file)
 
 # Iterate over the packets
 for packet in packets:
     processed_packet = {
+    	'ip_source': '192.168.1.1',
     	'duration': 2,
         'protocol_type': calculate_protocol_type(packet),
         'service': calculate_service(packet),
