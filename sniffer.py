@@ -1,3 +1,5 @@
+import time
+import socket
 from scapy.all import *
 import os
 
@@ -14,10 +16,10 @@ valid_services = ['aol', 'auth', 'bgp', 'courier', 'csnet_ns', 'ctf', 'daytime',
                   'urp_i', 'uucp', 'uucp_path', 'vmnet', 'whois', 'X11', 'Z39_50']
 
 valid_packets_captured = 0
-max_valid_packets = 10
+max_valid_packets = 500
 valid_packets = []
 
-def sniff_packets(interface=None):
+def sniff_packets(interface='lo'):
     global valid_packets_captured, valid_packets
 
     def handle_packet(packet):
@@ -63,6 +65,9 @@ def sniff_packets(interface=None):
         if valid_packets_captured >= max_valid_packets:
             return True
 
+    # Start the timer
+    start_time = time.time()
+
     packets = sniff(iface=interface, prn=lambda x: handle_packet(x), stop_filter=lambda x: valid_packets_captured >= max_valid_packets)
 
     # Get the directory of the script
@@ -71,6 +76,13 @@ def sniff_packets(interface=None):
     # Save the valid packets to a PCAP file
     pcap_file = os.path.join(script_dir, 'valid_packets.pcap')
     wrpcap(pcap_file, valid_packets)
+
+    # End the timer
+    end_time = time.time()
+
+    # Calculate the duration
+    duration = end_time - start_time
+    return duration
 
 # Start sniffing packets on all interfaces
 sniff_packets()
