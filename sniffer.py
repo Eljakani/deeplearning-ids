@@ -16,7 +16,7 @@ valid_services = ['aol', 'auth', 'bgp', 'courier', 'csnet_ns', 'ctf', 'daytime',
                   'urp_i', 'uucp', 'uucp_path', 'vmnet', 'whois', 'X11', 'Z39_50']
 
 valid_packets_captured = 0
-max_valid_packets = 500
+max_valid_packets = 10
 valid_packets = []
 
 def sniff_packets(interface=None):
