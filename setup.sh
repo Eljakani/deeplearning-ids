@@ -53,7 +53,7 @@ chmod +x run.sh
 while true; do
     read -p "Do you want to run the script? (y/n): " yn
     case $yn in
-        [Yy]* ) ./run.sh; break;;
+        [Yy]* ) sudo ./run.sh; break;;
         [Nn]* ) exit;;
         * ) echo "Please answer yes or no.";;
     esac
