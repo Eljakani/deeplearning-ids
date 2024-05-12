@@ -24,7 +24,7 @@ if ! command -v docker-compose &> /dev/null; then
 fi
 
 # Run Docker Compose in the current folder
-docker compose up -d
+docker compose build
 # Check if the containers are running
 if [ $? -eq 0 ]; then
     echo "Docker containers are running."
