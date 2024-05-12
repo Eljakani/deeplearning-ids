@@ -13,6 +13,8 @@ import Anomalies from './DashboardCards/Anomalies';
 import AllPackets from './DashboardCards/AllPackets';
 import LatestAnomalies from './DashboardCards/LatestAnomalies';
 import { Spin } from 'antd';
+import { Flex, Progress, Slider, Typography } from 'antd';
+import StatusPercent from './DashboardCards/StatusPercent';
 
 const Dashboard = () => {
     const fetcher = (...args) => fetch(...args).then(res => res.json())
@@ -34,11 +36,11 @@ const Dashboard = () => {
                     </Col>
                     </Row>
                     <Row gutter={16}>
-                        <Col span={20}>
+                        <Col span={18}>
                             <LatestAnomalies data={data.latest_anomalies} isLoading={isLoading} />
                         </Col>
-                        <Col span={4}>
-                            
+                        <Col span={6}>
+                            <StatusPercent  data={data} isLoading={isLoading} />
                         </Col>
                     </Row>
                 </>

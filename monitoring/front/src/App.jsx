@@ -44,8 +44,7 @@ const App = () => {
           onClick={(e) => setActiveTab(e.key)}
         >
           <Menu.Item key="dashboard">Dashboard</Menu.Item>
-          <Menu.Item key="alerts">Alerts</Menu.Item>
-          <Menu.Item key="settings">Settings</Menu.Item>
+          
         </Menu>
       </Header>
       <Content

@@ -41,7 +41,7 @@ const LatestAnomalies = ({data, isLoading}) => {
             <p>Port Source: {selectedItem?.port_source}</p>
             <p>Port Destination: {selectedItem?.port_destination}</p>
             <p>Protocol: {selectedItem?.protocol}</p>
-            <p>Timestamp: {selectedItem?.timestamp}</p>
+            <p>Timestamp: {Date(selectedItem?.timestamp).toString()}</p>
 
         </Modal>
 
@@ -55,8 +55,8 @@ const LatestAnomalies = ({data, isLoading}) => {
                   <List.Item>
                     <List.Item.Meta
                       avatar={<BugOutlined />}
-                      title={<a onClick={() => handleModalLoad(item)}>{item.ip_source} - {item.ip_destination}</a>}
-                      description='Anomaly detected!'
+                      title={<a onClick={() => handleModalLoad(item)}>{item.ip_source}</a>}
+                      description='Anomaly detected in the network'
                     />
                   </List.Item>
                 )}
