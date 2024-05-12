@@ -7,7 +7,7 @@ from pymongo import MongoClient
 
 def process_real_time_data():
     # Connect to the MongoDB database
-    client = MongoClient('mongodb://192.168.160.130:27017/')
+    client = MongoClient('mongodb://localhost:27017/')
     db = client['deeplearning_db']
     input_collection = db['valid_csv']
     output_collection = db['predictions']  # Create a new collection for storing predictions
