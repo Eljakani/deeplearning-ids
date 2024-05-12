@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Breadcrumb, Progress, Statistic } from 'antd';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import Dashboard from './Dashboard';
 
 const { Header, Content, Footer } = Layout;
 const { Countdown } = Statistic;
@@ -14,44 +15,14 @@ const App = () => {
   });
 
   useEffect(() => {
-    const socket = new WebSocket(`ws://${window.location.hostname}:3000`);
-  
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setDashboardData((prevData) => ({
-        ...prevData,
-        lineChartData: [...prevData.lineChartData, data.lineChartPoint],
-        networkTraffic: data.networkTraffic,
-        detectedThreats: data.detectedThreats,
-      }));
-    };
-  
-    return () => {
-      socket.close();
-    };
+    
   }, []);
 
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
         return (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-              <Statistic title="Network Traffic" value={dashboardData.networkTraffic} />
-              <Countdown title="Detected Threats" value={dashboardData.detectedThreats} />
-            </div>
-            <div style={{ minHeight:'500px' }}>
-              <LineChart width={800} height={300} data={dashboardData.lineChartData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <CartesianGrid strokeDasharray="3 3" />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="value" stroke="#8884d8" />
-              </LineChart>
-            </div>
-            <Progress type="circle" percent={75} />
-          </div>
+          <Dashboard />
         );
       case 'alerts':
         return <div>Alerts Content</div>;
@@ -63,7 +34,7 @@ const App = () => {
   };
 
   return (
-    <Layout>
+    <Layout style={{ minHeight: '100vh' }}>
       <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
         <div className="logo" />
         <Menu
@@ -93,7 +64,7 @@ const App = () => {
         </div>
       </Content>
       <Footer style={{ textAlign: 'center' }}>
-        Network IDS Monitoring ©2023 Created by Your Name
+        Network IDS Monitoring ©2024
       </Footer>
     </Layout>
   );

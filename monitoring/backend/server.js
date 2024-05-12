@@ -1,17 +1,15 @@
 const express = require('express');
 const http = require('http');
-const { Server } = require('socket.io');
 const { MongoClient } = require('mongodb');
+const cors = require('cors'); 
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
 
+// Middleware to allow CORS
+app.use(cors());
 
-//client = MongoClient('mongodb://localhost:27017/')
-//db = client['deeplearning_db']
-//collection = db['valid_packets']
-
+// MongoDB configuration
 const MONGODB_URI = "mongodb://localhost:27017/";
 const MONGODB_DB = "deeplearning_db";
 
@@ -36,22 +34,18 @@ const connectToDatabase = async () => {
 
 connectToDatabase();
 
-io.on('connection', (socket) => {
-  console.log('New client connected');
 
-  // Simulate real-time data updates
-  setInterval(async () => {
-    const data = await db.collection('valid_packets').findOne({}, { sort: { $natural: -1 } });
-
-    if (data) {
-      socket.emit('data', data);
-    }
-  }, 5000); // Update every 5 seconds
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
-  });
+// Route handler for anomalies retrieval via http
+app.get('/overview', async (req, res) => {
+  const anomalies = await db.collection('anomaly').find({}).toArray();
+  const all_packets = await db.collection('valid_packets').find({}).toArray();
+  res.json({ anomalies: anomalies.length, all_packets: all_packets.length, latest_anomalies: anomalies.slice(-5) });
 });
+app.get('/anomaly/:id', async (req, res) => {
+  const anomaly = await db.collection('anomaly').findOne({ _id: req.params.id });
+  res.json(anomaly);
+});
+
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
