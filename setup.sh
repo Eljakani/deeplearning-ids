@@ -5,11 +5,11 @@ if ! command -v docker &> /dev/null; then
     echo "Docker not found. Installing Docker..."
     # Install Docker 
     sudo apt-get update
-    sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+    sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -y
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     sudo apt-get update
-    sudo apt-get install docker-ce
+    sudo apt-get install docker-ce -y
     sudo usermod -aG docker ${USER}
     sudo systemctl enable docker
     sudo systemctl start docker
@@ -20,7 +20,7 @@ fi
 if ! command -v docker-compose &> /dev/null; then
     echo "Docker Compose not found. Installing Docker Compose..."
     # Install Docker Compose
-    sudo apt install docker-compose
+    sudo apt install docker-compose -y
 fi
 
 # Run Docker Compose in the current folder
@@ -35,6 +35,7 @@ fi
 # Activate the virtual environment if it exists else create it
 if [ ! -d "env" ]; then
     echo "Creating virtual environment..."
+    sudo apt install python3-venv -y
     python3 -m venv env
 fi
 # Activate the virtual environment
