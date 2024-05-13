@@ -19,7 +19,7 @@ valid_packets_captured = 0
 max_valid_packets = 10
 valid_packets = []
 
-def sniff_packets(interface=None):
+def sniff_packets(interface='eno1'):
     global valid_packets_captured, valid_packets
 
     def handle_packet(packet):
