@@ -20,7 +20,7 @@ const Dashboard = () => {
     const fetcher = (...args) => fetch(...args).then(res => res.json())
     const { data, error, isLoading } = useSWR(
         // get the server address from the environment variable and add the endpoint "/overview"
-        `http://128.110.217.103:3000/overview`,
+        `http://128.110.217.82:3000/overview`,
         fetcher,
         { refreshInterval: 1000 }
         );
