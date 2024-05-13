@@ -34,7 +34,7 @@ You can monitor and observe the detected anomalies via the web interface at http
 ## Contributors
 - [El Jakani Yassine](https://github.com/eljakani)
 - [Saad Benmouya](https://github.com/SaadBenmouya)
-- [El Assri El Mahdi](https://github.com/Pegasus070)
+- [El Aasri El Mahdi](https://github.com/Pegasus070)
 - [Essaleh Yassine](https://github.com/Yassinom)
 - [El Motassadeq Moad](https://github.com/moadza)
 - [Assiri Abdelhakim](https://github.com/hakimziyach)
