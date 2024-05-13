@@ -81,6 +81,3 @@ def sniff_packets(interface='eno1'):
     # Calculate the duration
     duration = end_time - start_time
     return duration
-
-# Start sniffing packets on all interfaces
-sniff_packets()
